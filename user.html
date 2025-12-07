@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>User Profile - Toast & Tales</title>
+    <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Toast & Tales</div>
+    </nav>
+
+    <main style="max-width:800px;margin:40px auto;padding:20px;">
+        <h2>Your Profile</h2>
+        <div id="userInfo">
+            <p id="userEmail">Email: —</p>
+            <p id="userId">User ID: —</p>
+        </div>
+        <div style="margin-top:20px;">
+            <button id="signOutBtn" class="submit-btn">Sign Out</button>
+        </div>
+    </main>
+
+    <script type="module">
+        import { auth } from './firebase-init.js';
+        import { signOut } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
+
+        const userEmail = document.getElementById('userEmail');
+        const userId = document.getElementById('userId');
+        const signOutBtn = document.getElementById('signOutBtn');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                userEmail.textContent = 'Email: ' + (user.email || '—');
+                userId.textContent = 'User ID: ' + (user.uid || '—');
+            } else {
+                // Not signed in: redirect to homepage
+                window.location.href = 'index.html';
+            }
+        });
+
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                // redirect to home after sign out
+                window.location.href = 'index.html';
+            } catch (err) {
+                console.error('Sign out error', err);
+                alert('Error signing out: ' + (err.message || err));
+            }
+        });
+    </script>
+</body>
+</html>

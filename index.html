@@ -13,6 +13,10 @@
         <div class="nav-links">
             <a href="contactus.html" class="nav-btn">Contact Us</a>
             <a href="#" class="nav-btn login-btn" onclick="openLogin()">Log In</a>
+            <!-- User icon link: hidden when not logged in, shown when auth state exists -->
+            <a href="user.html" id="userLink" class="user-link" style="display: none;" title="Open profile">
+                <div id="userIcon" class="user-icon">U</div>
+            </a>
         </div>
     </nav>
 
@@ -77,21 +81,44 @@
         <div class="modal-box">
             <span class="close-btn" onclick="closeLogin()">&times;</span>
             <h3>Player Login</h3>
-            <form>
+            <form id="loginForm">
                 <div class="input-group">
-                    <input type="text" placeholder="Username (e.g. KopiKing)" required>
+                    <input id="loginEmail" type="email" placeholder="Email" required>
                 </div>
                 <div class="input-group">
-                    <input type="password" placeholder="Password" required>
+                    <input id="loginPassword" type="password" placeholder="Password" required>
                 </div>
                 <button type="submit" class="submit-btn">Log In</button>
             </form>
             <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
-                Don't have an account? Create one in the App!
+                Don't have an account? <a href="#" onclick="switchToSignup()" style="color: var(--yakun-brown); text-decoration: none; cursor: pointer;">Create one here!</a>
             </p>
         </div>
     </div>
 
+    <div id="signupModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeSignup()">&times;</span>
+            <h3>Create Account</h3>
+            <form id="signupForm">
+                <div class="input-group">
+                    <input id="signupEmail" type="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input id="signupPassword" type="password" placeholder="Password" required>
+                </div>
+                <div class="input-group">
+                    <input id="signupConfirm" type="password" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+            <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
+                Already have an account? <a href="#" onclick="switchToLogin()" style="color: var(--yakun-brown); text-decoration: none; cursor: pointer;">Log In</a>
+            </p>
+        </div>
+    </div>
+
+    
     <script>
         // CAROUSEL LOGIC
         let currentSlide = 0;
@@ -113,11 +140,56 @@
 
         setInterval(nextSlide, 4000);
 
-        // MODAL LOGIC
-        const modal = document.getElementById('loginModal');
-        function openLogin() { modal.style.display = 'flex'; }
-        function closeLogin() { modal.style.display = 'none'; }
-        window.onclick = function(event) { if (event.target == modal) closeLogin(); }
+        // MODAL LOGIC - MAKE THESE GLOBAL
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
+        
+        window.openLogin = function() { 
+            console.log("Opening login modal");
+            signupModal.style.display = 'none';
+            loginModal.style.display = 'flex'; 
+        };
+        
+        window.closeLogin = function() { 
+            loginModal.style.display = 'none'; 
+        };
+        
+        window.openSignup = function() { 
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'flex'; 
+        };
+        
+        window.closeSignup = function() { 
+            signupModal.style.display = 'none'; 
+        };
+        
+        window.switchToLogin = function() {
+            signupModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        };
+        
+        window.switchToSignup = function() {
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'flex';
+        };
+        
+        window.onclick = function(event) { 
+            if (event.target == loginModal) closeLogin();
+            if (event.target == signupModal) closeSignup();
+        }
+    </script>
+    
+    <!-- Import Firebase modules -->
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module">
+        // Import and initialize auth
+        import { initAuth } from './auth.js';
+        
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM loaded, initializing auth...");
+            initAuth();
+        });
     </script>
 </body>
 </html>

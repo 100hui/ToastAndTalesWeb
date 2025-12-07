@@ -61,6 +61,16 @@ nav {
 
 .login-btn:hover { background-color: darkred; color: white; }
 
+/* User icon in navbar */
+.user-link { display: inline-flex; align-items: center; margin-left: 10px; }
+.user-icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--gold-accent); color: var(--yakun-brown);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+
 /* --- HERO CAROUSEL --- */
 .carousel-container {
     position: relative;

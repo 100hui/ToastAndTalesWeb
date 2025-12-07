@@ -130,6 +130,13 @@
             font-family: inherit;
             resize: vertical;
         }
+        
+        /* Loading indicator */
+        .loading {
+            display: none;
+            color: var(--yakun-brown);
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -190,22 +197,26 @@
 
         <div class="form-box">
             <h3>Send a Message</h3>
-            <form onsubmit="sendMessage(event)">
+            <form id="contactForm" onsubmit="sendMessage(event)">
                 <div class="input-group">
                     <label>Your Name</label>
-                    <input type="text" placeholder="Justin" required>
+                    <input type="text" id="contactName" placeholder="Justin" required>
                 </div>
                 <div class="input-group">
                     <label>Email Address</label>
-                    <input type="email" placeholder="justin@example.com" required>
+                    <input type="email" id="contactEmail" placeholder="justin@example.com" required>
                 </div>
                 <div class="input-group">
                     <label>Message</label>
-                    <textarea rows="4" placeholder="You're very good, worth A+ hehehe..." required></textarea>
+                    <textarea id="contactMessage" rows="4" placeholder="You're very good, worth A+ hehehe..." required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">Send Message</button>
+                <button type="submit" class="submit-btn" id="submitBtn">Send Message</button>
+                <div class="loading" id="loadingIndicator">Sending message...</div>
                 <p id="success-msg" style="display:none; color: green; margin-top: 15px; font-weight: bold;">
-                    Message sent! We'll contact you in 7 days.
+                    ✓ Message sent! We'll contact you in 7 days.
+                </p>
+                <p id="error-msg" style="display:none; color: red; margin-top: 15px; font-weight: bold;">
+                    ✗ Failed to send message. Please try again.
                 </p>
             </form>
         </div>
@@ -215,40 +226,158 @@
         &copy; 2025 Toast & Tales Project. Not affiliated officially with Ya Kun Kaya Toast.
     </footer>
 
+    <!-- UPDATE THESE MODALS TO MATCH YOUR INDEX.HTML -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-btn" onclick="closeLogin()">&times;</span>
             <h3>Player Login</h3>
-            <form>
+            <form id="loginForm">
                 <div class="input-group">
-                    <input type="text" placeholder="Username" required>
+                    <input id="loginEmail" type="email" placeholder="Email" required>
                 </div>
                 <div class="input-group">
-                    <input type="password" placeholder="Password" required>
+                    <input id="loginPassword" type="password" placeholder="Password" required>
                 </div>
                 <button type="submit" class="submit-btn">Log In</button>
             </form>
+            <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
+                Don't have an account? <a href="#" onclick="switchToSignup()" style="color: var(--yakun-brown); text-decoration: none; cursor: pointer;">Create one here!</a>
+            </p>
         </div>
     </div>
 
-    <script>
-        // Simple script to handle the login modal opening/closing
-        const modal = document.getElementById('loginModal');
-        function openLogin() { modal.style.display = 'flex'; }
-        function closeLogin() { modal.style.display = 'none'; }
-        window.onclick = function (event) { if (event.target == modal) closeLogin(); }
+    <div id="signupModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeSignup()">&times;</span>
+            <h3>Create Account</h3>
+            <form id="signupForm">
+                <div class="input-group">
+                    <input id="signupEmail" type="email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input id="signupPassword" type="password" placeholder="Password" required>
+                </div>
+                <div class="input-group">
+                    <input id="signupConfirm" type="password" placeholder="Confirm Password" required>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+            </form>
+            <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
+                Already have an account? <a href="#" onclick="switchToLogin()" style="color: var(--yakun-brown); text-decoration: none; cursor: pointer;">Log In</a>
+            </p>
+        </div>
+    </div>
 
-        // Form submission handler
-        function sendMessage(event) {
-        event.preventDefault(); // Stops the page from refreshing
+    <!-- IMPORT AUTH.JS FOR LOGIN FUNCTIONALITY -->
+    <script>
+        // Simple modal functions that will be overridden by auth.js
+        const loginModal = document.getElementById('loginModal');
+        const signupModal = document.getElementById('signupModal');
         
-        // Show the success message
-        document.getElementById('success-msg').style.display = 'block';
+        window.openLogin = function() { 
+            signupModal.style.display = 'none';
+            loginModal.style.display = 'flex'; 
+        };
         
-        // Clear the text boxes
-        event.target.reset();
-    }
+        window.closeLogin = function() { 
+            loginModal.style.display = 'none'; 
+        };
+        
+        window.openSignup = function() { 
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'flex'; 
+        };
+        
+        window.closeSignup = function() { 
+            signupModal.style.display = 'none'; 
+        };
+        
+        window.switchToLogin = function() {
+            signupModal.style.display = 'none';
+            loginModal.style.display = 'flex';
+        };
+        
+        window.switchToSignup = function() {
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'flex';
+        };
+        
+        window.onclick = function(event) { 
+            if (event.target == loginModal) closeLogin();
+            if (event.target == signupModal) closeSignup();
+        }
     </script>
+    
+    <script type="module">
+        // Import Firebase functions for contact form
+        import { db } from './firebase-init.js';
+        import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+        
+        // Import auth functionality
+        import { initAuth } from './auth.js';
+        
+        // Initialize authentication
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Contact page: Initializing auth...");
+            initAuth();
+        });
+
+        // Contact form submission handler
+        async function sendMessage(event) {
+            event.preventDefault(); // Stops the page from refreshing
+            
+            // Get form elements
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const message = document.getElementById('contactMessage').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const loading = document.getElementById('loadingIndicator');
+            const successMsg = document.getElementById('success-msg');
+            const errorMsg = document.getElementById('error-msg');
+            
+            // Hide previous messages
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+            
+            // Show loading state
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            submitBtn.textContent = 'Sending...';
+            
+            try {
+                // Save to Firestore
+                await addDoc(collection(db, "contactMessages"), {
+                    name: name,
+                    email: email,
+                    message: message,
+                    timestamp: serverTimestamp(),
+                    read: false,
+                    status: 'new'
+                });
+                
+                // Show success message
+                successMsg.style.display = 'block';
+                
+                // Reset form
+                document.getElementById('contactForm').reset();
+                
+            } catch (error) {
+                console.error("Error saving message: ", error);
+                errorMsg.style.display = 'block';
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+                submitBtn.textContent = 'Send Message';
+            }
+        }
+        
+        // Make function globally available
+        window.sendMessage = sendMessage;
+    </script>
+    
+    <!-- Import Firebase init -->
+    <script type="module" src="firebase-init.js"></script>
 
 </body>
 
