@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toast & Tales | A Kopi Heritage Journey</title>
+    <link rel="stylesheet" href="homepage.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Toast & Tales</div>
+        <div class="nav-links">
+            <a href="contactus.html" class="nav-btn">Contact Us</a>
+            <a href="#" class="nav-btn login-btn" onclick="openLogin()">Log In</a>
+        </div>
+    </nav>
+
+    <div class="carousel-container">
+        <div class="hero-text">
+            <h1>Relive the Heritage</h1>
+            <p>Experience the art of Kopi & Kaya in Augmented Reality.</p>
+        </div>
+        
+        <div class="slide active">
+            <img src="images/yakun1.png" alt="Ya Kun Kopi">
+        </div> <div class="slide">
+            <img src="images/yakun2.png" alt="Ya Kun Toast">
+        </div>
+
+        <div class="slide">
+            <img src="images/yakun3.jpg" alt="Ya Kun Set">
+        </div>
+    </div>
+
+    <section id="about-game">
+        <div class="section-header">
+            <h2>About Toast & Tales</h2>
+        </div>
+        <div class="about-grid">
+            <div class="about-text">
+                <p><strong>Toast & Tales</strong> is an interactive Augmented Reality (AR) experience that brings the heritage of Singaporean breakfast to life.</p>
+                <p>Using your smartphone, scan our specially designed posters to unlock 3D interactions. Pour the Kopi, spread the Kaya, and assemble the perfect Full Set Meal.</p>
+                <p>Complete challenges, earn digital badges, and become a <em>Heritage Master</em>!</p>
+            </div>
+            <div class="about-image">
+                <img src="images/yakun1.png" alt="Game Screenshot"> 
+                <!-- placeholder for game screenshot -->
+            </div>
+        </div>
+    </section>
+
+    <div class="history-section">
+        <section id="history">
+            <div class="section-header">
+                <h2>The Ya Kun Story</h2>
+            </div>
+            <div class="history-content">
+                <p>It all began in 1944. Loi Ah Koon, a Hainanese immigrant, set up a humble coffee stall at Telok Ayer Basin. With just a charcoal grill and a pair of linen trousers, he served the community with warmth and dedication.</p>
+                
+                <div class="history-card">
+                    <p>“The coffee brewed not just a beverage, but a bond between people. The kaya toast was not just breakfast, but a taste of home.”</p>
+                </div>
+                
+                <p style="margin-top: 20px;">
+                    Today, Ya Kun Kaya Toast is a symbol of Singapore's rich food heritage, preserving the traditional way of making coffee and toast for future generations.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        &copy; 2025 Toast & Tales Project. Not affiliated officially with Ya Kun Kaya Toast.
+    </footer>
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeLogin()">&times;</span>
+            <h3>Player Login</h3>
+            <form>
+                <div class="input-group">
+                    <input type="text" placeholder="Username (e.g. KopiKing)" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="submit-btn">Log In</button>
+            </form>
+            <p style="font-size: 0.8rem; margin-top: 10px; color: #666;">
+                Don't have an account? Create one in the App!
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // CAROUSEL LOGIC
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.remove('active');
+                if (i === index) {
+                    slide.classList.add('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        setInterval(nextSlide, 4000);
+
+        // MODAL LOGIC
+        const modal = document.getElementById('loginModal');
+        function openLogin() { modal.style.display = 'flex'; }
+        function closeLogin() { modal.style.display = 'none'; }
+        window.onclick = function(event) { if (event.target == modal) closeLogin(); }
+    </script>
+</body>
+</html>

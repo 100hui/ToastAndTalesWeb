@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Toast & Tales</title>
+    <link rel="stylesheet" href="homepage.css">
+
+    <style>
+        /* --- PAGE SPECIFIC STYLES --- */
+
+        /* 1. HEADER BANNER */
+        .page-header {
+            background-color: var(--yakun-brown);
+            color: var(--gold-accent);
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .page-header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        /* 2. TEAM SECTION */
+        .team-section {
+            padding: 60px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .team-grid {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            /* Wraps to next line on mobile */
+            margin-top: 40px;
+        }
+
+        .team-card {
+            background-color: white;
+            border-top: 5px solid var(--yakun-red);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            padding: 30px;
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            /* Slight lift effect */
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            /* Circle shape */
+            object-fit: cover;
+            border: 4px solid var(--cream-bg);
+            margin-bottom: 20px;
+            background-color: #ddd;
+            /* Gray placeholder if no image */
+        }
+
+        .role {
+            color: var(--yakun-red);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .contact-details {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.8;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        /* 3. ADDRESS & FORM SECTION */
+        .info-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            max-width: 1000px;
+            margin: 40px auto 80px auto;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .address-box {
+            background-color: var(--yakun-brown);
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .address-box h3 {
+            color: var(--gold-accent);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .form-box {
+            padding: 40px;
+        }
+
+        .form-box h3 {
+            color: var(--yakun-brown);
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Toast & Tales</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn">Home</a>
+            <a href="#" class="nav-btn login-btn" onclick="openLogin()">Log In</a>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Get in Touch</h1>
+        <p>Questions about the game? Reach out to the development team.</p>
+    </div>
+
+    <section class="team-section">
+        <h2>Meet the Creators</h2>
+        <div class="team-grid">
+
+            <div class="team-card">
+                <img src="images/baihui.png" alt="Baihui" class="profile-pic">
+                <h3>Baihui</h3>
+                <div class="role">Lead Designer</div>
+                <p>Responsible for crafting the core Game Logic and designing the Web interface.</p>
+
+                <div class="contact-details">
+                    <p>📞 +65 8124 0508</p>
+                    <p>✉️ baihui@toastandtales.com</p>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <img src="images/ruimin.jpg" alt="Ruimin" class="profile-pic">
+                <h3>Ruimin</h3>
+                <div class="role">Lead Developer</div>
+                <p>Responsible for engineering the AR Mechanics and managing Data Control systems.</p>
+
+                <div class="contact-details">
+                    <p>📞 +65 9355 3296</p>
+                    <p>✉️ ruimin@toastandtales.com</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="info-container">
+
+        <div class="address-box">
+            <h3>Our Studio</h3>
+            <p><strong>Ngee Ann Polytechnic IM01</strong></p>
+            <p>535 Clementi Rd</p>
+            <p>Singapore 599489</p>
+        </div>
+
+        <div class="form-box">
+            <h3>Send a Message</h3>
+            <form onsubmit="sendMessage(event)">
+                <div class="input-group">
+                    <label>Your Name</label>
+                    <input type="text" placeholder="Justin" required>
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" placeholder="justin@example.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Message</label>
+                    <textarea rows="4" placeholder="You're very good, worth A+ hehehe..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+                <p id="success-msg" style="display:none; color: green; margin-top: 15px; font-weight: bold;">
+                    Message sent! We'll contact you in 7 days.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Toast & Tales Project. Not affiliated officially with Ya Kun Kaya Toast.
+    </footer>
+
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeLogin()">&times;</span>
+            <h3>Player Login</h3>
+            <form>
+                <div class="input-group">
+                    <input type="text" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="submit-btn">Log In</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to handle the login modal opening/closing
+        const modal = document.getElementById('loginModal');
+        function openLogin() { modal.style.display = 'flex'; }
+        function closeLogin() { modal.style.display = 'none'; }
+        window.onclick = function (event) { if (event.target == modal) closeLogin(); }
+
+        // Form submission handler
+        function sendMessage(event) {
+        event.preventDefault(); // Stops the page from refreshing
+        
+        // Show the success message
+        document.getElementById('success-msg').style.display = 'block';
+        
+        // Clear the text boxes
+        event.target.reset();
+    }
+    </script>
+
+</body>
+
+</html>
