@@ -8,7 +8,7 @@ import { firebaseConfig } from "./firebase-config.js";
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app); // This stays as Firestore (so your login doesn't break)
+const db = getFirestore(app); 
 
 // 2. INITIALIZE REALTIME DATABASE SEPARATELY
 const realtimeDb = getDatabase(app); 

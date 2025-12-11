@@ -12,16 +12,22 @@
             gap: 20px;
             margin-top: 20px;
             flex-wrap: wrap;
+            justify-content: center; /* Centers badges on mobile */
         }
 
         .badge-card {
             background: white;
-            border: 2px solid var(--yakun-brown); /* Using your brown var */
+            border: 2px solid var(--yakun-brown);
             border-radius: 10px;
             padding: 20px;
             width: 200px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .badge-card:hover {
+            transform: scale(1.05); /* Slight pop effect */
         }
 
         .badge-icon {
@@ -41,9 +47,16 @@
             color: #666;
         }
 
+        /* LOCKED STATE: Greyed out */
         .locked {
-            opacity: 0.5;
+            opacity: 0.6;
             filter: grayscale(100%);
+            background-color: #f0f0f0;
+            border-color: #ccc;
+        }
+        
+        .locked .badge-title {
+            color: #555; /* Grey text for locked items */
         }
     </style>
 </head>
@@ -68,15 +81,13 @@
             <p>Loading achievements...</p>
         </div>
 
-        <div style="margin-top:40px;">
-            <button id="signOutBtn" class="submit-btn">Sign Out</button>
+        <div style="margin-top:40px; text-align: center;">
+            <button id="signOutBtn" class="submit-btn" style="width: 200px;">Sign Out</button>
         </div>
     </main>
 
     <script type="module">
-        // 1. UPDATE IMPORT: Get 'realtimeDb' instead of 'db'
         import { auth, realtimeDb } from './firebase-init.js'; 
-        
         import { signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-auth.js';
         import { ref, get, child } from 'https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js';
 
@@ -88,18 +99,17 @@
             if (user) {
                 userEmail.textContent = 'Welcome back, ' + user.email;
 
-                // 2. USE 'realtimeDb' HERE
                 const dbRef = ref(realtimeDb); 
                 
                 try {
-                    // This matches your screenshot structure: users -> UID -> Toast/Kopi
                     const snapshot = await get(child(dbRef, `users/${user.uid}`));
                     
                     if (snapshot.exists()) {
                         const data = snapshot.val();
                         renderBadges(data);
                     } else {
-                        badgesList.innerHTML = "<p>No game data found. Start playing to earn badges!</p>";
+                        // User exists but has no game data yet -> Show all locked
+                        renderBadges({}); 
                     }
                 } catch (error) {
                     console.error("Error fetching data:", error);
@@ -110,40 +120,41 @@
             }
         });
 
-
-        // Function to create the Badge HTML
         function renderBadges(data) {
             badgesList.innerHTML = ""; // Clear loading text
 
-            // --- BADGE 1: KOPI ---
-            if (data.Kopi === true) {
-                badgesList.innerHTML += `
-                    <div class="badge-card">
-                        <span class="badge-icon">☕</span>
-                        <div class="badge-title">Nanyang Brewmaster</div>
-                        <div class="badge-desc">You've mastered the art of the perfect pour.</div>
-                    </div>
-                `;
-            }
+            // 1. KOPI BADGE LOGIC
+            const hasKopi = data.Kopi === true;
+            badgesList.innerHTML += `
+                <div class="badge-card ${hasKopi ? '' : 'locked'}">
+                    <span class="badge-icon">☕</span>
+                    <div class="badge-title">${hasKopi ? 'Nanyang Brewmaster' : 'Locked'}</div>
+                    <div class="badge-desc">${hasKopi ? "You've mastered the art of the perfect pour." : "Complete the Kopi brewing level to unlock."}</div>
+                </div>
+            `;
 
-            // --- BADGE 2: TOAST ---
-            if (data.Toast === true) {
-                badgesList.innerHTML += `
-                    <div class="badge-card">
-                        <span class="badge-icon">🍞</span>
-                        <div class="badge-title">Charcoal Grill Guardian</div>
-                        <div class="badge-desc">You kept the heritage flame alive.</div>
-                    </div>
-                `;
-            }
+            // 2. TOAST BADGE LOGIC
+            const hasToast = data.Toast === true;
+            badgesList.innerHTML += `
+                <div class="badge-card ${hasToast ? '' : 'locked'}">
+                    <span class="badge-icon">🍞</span>
+                    <div class="badge-title">${hasToast ? 'Charcoal Grill Guardian' : 'Locked'}</div>
+                    <div class="badge-desc">${hasToast ? "You kept the heritage flame alive." : "Complete the Toast grilling level to unlock."}</div>
+                </div>
+            `;
 
-            // If no badges yet
-            if (!data.Kopi && !data.Toast) {
-                badgesList.innerHTML = "<p>You haven't earned any badges yet. Open the app to start your journey!</p>";
-            }
+            // 3. FULL SET BADGE LOGIC (Progress >= 3)
+            // Note: We check if progress exists and is >= 3
+            const hasFullSet = (data.progress && data.progress >= 3);
+            badgesList.innerHTML += `
+                <div class="badge-card ${hasFullSet ? '' : 'locked'}">
+                    <span class="badge-icon">🏆</span>
+                    <div class="badge-title">${hasFullSet ? 'The Heritage Legend' : 'Locked'}</div>
+                    <div class="badge-desc">${hasFullSet ? "You assembled the ultimate traditional breakfast!" : "Complete all 3 dishes to unlock the final badge."}</div>
+                </div>
+            `;
         }
 
-        // Sign Out Logic
         signOutBtn.addEventListener('click', async () => {
             try {
                 await signOut(auth);
