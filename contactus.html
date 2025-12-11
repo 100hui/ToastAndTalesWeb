@@ -36,7 +36,6 @@
             justify-content: center;
             gap: 40px;
             flex-wrap: wrap;
-            /* Wraps to next line on mobile */
             margin-top: 40px;
         }
 
@@ -52,19 +51,16 @@
 
         .team-card:hover {
             transform: translateY(-5px);
-            /* Slight lift effect */
         }
 
         .profile-pic {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            /* Circle shape */
             object-fit: cover;
             border: 4px solid var(--cream-bg);
             margin-bottom: 20px;
             background-color: #ddd;
-            /* Gray placeholder if no image */
         }
 
         .role {
@@ -85,17 +81,19 @@
             padding-top: 15px;
         }
 
-        /* 3. ADDRESS & FORM SECTION */
+        /* 3. ADDRESS & IMAGE SECTION */
         .info-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            /* This splits the container into two equal columns */
+            grid-template-columns: 1fr 1fr; 
             gap: 0;
             max-width: 1000px;
             margin: 40px auto 80px auto;
             background-color: white;
             border-radius: 8px;
-            overflow: hidden;
+            overflow: hidden; /* Ensures the image corners get rounded too */
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            min-height: 350px; /* Ensures a nice height even on large screens */
         }
 
         .address-box {
@@ -113,29 +111,28 @@
             margin-bottom: 20px;
         }
 
-        .form-box {
-            padding: 40px;
+        /* NEW STYLE FOR THE RIGHT SIDE IMAGE */
+        .image-box {
+            position: relative;
+            height: 100%;
         }
 
-        .form-box h3 {
-            color: var(--yakun-brown);
-            margin-bottom: 20px;
-        }
-
-        textarea {
+        .image-box img {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: inherit;
-            resize: vertical;
+            height: 100%;
+            /* 'cover' ensures the image fills the space without stretching */
+            object-fit: cover; 
+            display: block;
         }
-        
-        /* Loading indicator */
-        .loading {
-            display: none;
-            color: var(--yakun-brown);
-            margin-top: 10px;
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .info-container {
+                grid-template-columns: 1fr; /* Stack them on mobile */
+            }
+            .image-box {
+                height: 250px; /* Fixed height for image on mobile */
+            }
         }
     </style>
 </head>
@@ -195,38 +192,16 @@
             <p>Singapore 599489</p>
         </div>
 
-        <div class="form-box">
-            <h3>Send a Message</h3>
-            <form id="contactForm" onsubmit="sendMessage(event)">
-                <div class="input-group">
-                    <label>Your Name</label>
-                    <input type="text" id="contactName" placeholder="Justin" required>
-                </div>
-                <div class="input-group">
-                    <label>Email Address</label>
-                    <input type="email" id="contactEmail" placeholder="justin@example.com" required>
-                </div>
-                <div class="input-group">
-                    <label>Message</label>
-                    <textarea id="contactMessage" rows="4" placeholder="You're very good, worth A+ hehehe..." required></textarea>
-                </div>
-                <button type="submit" class="submit-btn" id="submitBtn">Send Message</button>
-                <div class="loading" id="loadingIndicator">Sending message...</div>
-                <p id="success-msg" style="display:none; color: green; margin-top: 15px; font-weight: bold;">
-                    ✓ Message sent! We'll contact you in 7 days.
-                </p>
-                <p id="error-msg" style="display:none; color: red; margin-top: 15px; font-weight: bold;">
-                    ✗ Failed to send message. Please try again.
-                </p>
-            </form>
+        <div class="image-box">
+            <img src="images/np.jpg" alt="Ngee Ann Polytechnic Campus">
         </div>
+
     </div>
 
     <footer>
         &copy; 2025 Toast & Tales Project. Not affiliated officially with Ya Kun Kaya Toast.
     </footer>
 
-    <!-- UPDATE THESE MODALS TO MATCH YOUR INDEX.HTML -->
     <div id="loginModal" class="modal-overlay">
         <div class="modal-box">
             <span class="close-btn" onclick="closeLogin()">&times;</span>
@@ -268,9 +243,7 @@
         </div>
     </div>
 
-    <!-- IMPORT AUTH.JS FOR LOGIN FUNCTIONALITY -->
     <script>
-        // Simple modal functions that will be overridden by auth.js
         const loginModal = document.getElementById('loginModal');
         const signupModal = document.getElementById('signupModal');
         
@@ -309,74 +282,14 @@
     </script>
     
     <script type="module">
-        // Import Firebase functions for contact form
-        import { db } from './firebase-init.js';
-        import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-        
-        // Import auth functionality
+        // Import auth functionality just for the login/signup modals
         import { initAuth } from './auth.js';
         
-        // Initialize authentication
         document.addEventListener('DOMContentLoaded', function() {
-            console.log("Contact page: Initializing auth...");
             initAuth();
         });
-
-        // Contact form submission handler
-        async function sendMessage(event) {
-            event.preventDefault(); // Stops the page from refreshing
-            
-            // Get form elements
-            const name = document.getElementById('contactName').value;
-            const email = document.getElementById('contactEmail').value;
-            const message = document.getElementById('contactMessage').value;
-            const submitBtn = document.getElementById('submitBtn');
-            const loading = document.getElementById('loadingIndicator');
-            const successMsg = document.getElementById('success-msg');
-            const errorMsg = document.getElementById('error-msg');
-            
-            // Hide previous messages
-            successMsg.style.display = 'none';
-            errorMsg.style.display = 'none';
-            
-            // Show loading state
-            submitBtn.disabled = true;
-            loading.style.display = 'block';
-            submitBtn.textContent = 'Sending...';
-            
-            try {
-                // Save to Firestore
-                await addDoc(collection(db, "contactMessages"), {
-                    name: name,
-                    email: email,
-                    message: message,
-                    timestamp: serverTimestamp(),
-                    read: false,
-                    status: 'new'
-                });
-                
-                // Show success message
-                successMsg.style.display = 'block';
-                
-                // Reset form
-                document.getElementById('contactForm').reset();
-                
-            } catch (error) {
-                console.error("Error saving message: ", error);
-                errorMsg.style.display = 'block';
-            } finally {
-                // Reset button state
-                submitBtn.disabled = false;
-                loading.style.display = 'none';
-                submitBtn.textContent = 'Send Message';
-            }
-        }
-        
-        // Make function globally available
-        window.sendMessage = sendMessage;
     </script>
     
-    <!-- Import Firebase init -->
     <script type="module" src="firebase-init.js"></script>
 
 </body>
