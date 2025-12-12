@@ -6,13 +6,13 @@
     <title>User Profile - Toast & Tales</title>
     <link rel="stylesheet" href="homepage.css">
     <style>
-        /* Extra styles just for the badges */
+
         .badges-container {
             display: flex;
             gap: 20px;
             margin-top: 20px;
             flex-wrap: wrap;
-            justify-content: center; /* Centers badges on mobile */
+            justify-content: center;
         }
 
         .badge-card {
@@ -27,7 +27,7 @@
         }
 
         .badge-card:hover {
-            transform: scale(1.05); /* Slight pop effect */
+            transform: scale(1.05);
         }
 
         .badge-icon {
@@ -45,9 +45,20 @@
         .badge-desc {
             font-size: 0.8rem;
             color: #666;
+            min-height: 40px; 
         }
 
-        /* LOCKED STATE: Greyed out */
+        /*Style for the Time Display */
+        .badge-time {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--yakun-brown);
+        }
+
+        /* LOCKED STATE */
         .locked {
             opacity: 0.6;
             filter: grayscale(100%);
@@ -56,7 +67,7 @@
         }
         
         .locked .badge-title {
-            color: #555; /* Grey text for locked items */
+            color: #555;
         }
     </style>
 </head>
@@ -108,7 +119,6 @@
                         const data = snapshot.val();
                         renderBadges(data);
                     } else {
-                        // User exists but has no game data yet -> Show all locked
                         renderBadges({}); 
                     }
                 } catch (error) {
@@ -123,34 +133,46 @@
         function renderBadges(data) {
             badgesList.innerHTML = ""; // Clear loading text
 
-            // 1. KOPI BADGE LOGIC
-            const hasKopi = data.Kopi === true;
+            // --- 1. KOPI BADGE ---
+            // Updated Logic: Check if 'completed' is true inside the object
+            const hasKopi = data.Kopi && data.Kopi.completed === true;
+            // Get Time: If it exists, round to 2 decimals, otherwise show --
+            const kopiTime = hasKopi && data.Kopi.timeTaken ? parseFloat(data.Kopi.timeTaken).toFixed(2) + "s" : null;
+
             badgesList.innerHTML += `
                 <div class="badge-card ${hasKopi ? '' : 'locked'}">
                     <span class="badge-icon">☕</span>
                     <div class="badge-title">${hasKopi ? 'Nanyang Brewmaster' : 'Locked'}</div>
                     <div class="badge-desc">${hasKopi ? "You've mastered the art of the perfect pour." : "Complete the Kopi brewing level to unlock."}</div>
+                    ${hasKopi ? `<div class="badge-time">⏱ Time Taken: ${kopiTime}</div>` : ''}
                 </div>
             `;
 
-            // 2. TOAST BADGE LOGIC
-            const hasToast = data.Toast === true;
+            // --- 2. TOAST BADGE ---
+            const hasToast = data.Toast && data.Toast.completed === true;
+            const toastTime = hasToast && data.Toast.timeTaken ? parseFloat(data.Toast.timeTaken).toFixed(2) + "s" : null;
+
             badgesList.innerHTML += `
                 <div class="badge-card ${hasToast ? '' : 'locked'}">
                     <span class="badge-icon">🍞</span>
                     <div class="badge-title">${hasToast ? 'Charcoal Grill Guardian' : 'Locked'}</div>
                     <div class="badge-desc">${hasToast ? "You kept the heritage flame alive." : "Complete the Toast grilling level to unlock."}</div>
+                    ${hasToast ? `<div class="badge-time">⏱ Time Taken: ${toastTime}</div>` : ''}
                 </div>
             `;
 
-            // 3. FULL SET BADGE LOGIC (Progress >= 3)
-            // Note: We check if progress exists and is >= 3
-            const hasFullSet = (data.progress && data.progress >= 3);
+            // --- 3. FULL SET BADGE ---
+            // Logic: Check progress OR if TraySet is completed
+            const hasFullSet = (data.progress >= 3) || (data.TraySet && data.TraySet.completed === true);
+            // Get Time for Full Set
+            const setTime = (data.TraySet && data.TraySet.timeTaken) ? parseFloat(data.TraySet.timeTaken).toFixed(2) + "s" : null;
+
             badgesList.innerHTML += `
                 <div class="badge-card ${hasFullSet ? '' : 'locked'}">
                     <span class="badge-icon">🏆</span>
                     <div class="badge-title">${hasFullSet ? 'The Heritage Legend' : 'Locked'}</div>
                     <div class="badge-desc">${hasFullSet ? "You assembled the ultimate traditional breakfast!" : "Complete all 3 dishes to unlock the final badge."}</div>
+                    ${hasFullSet && setTime ? `<div class="badge-time">⏱ Time Taken: ${setTime}</div>` : ''}
                 </div>
             `;
         }
