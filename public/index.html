@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>Toast & Tales | A Kopi Heritage Journey</title>
+    
     <link rel="stylesheet" href="homepage.css">
 </head>
 <body>
@@ -13,7 +15,7 @@
         <div class="nav-links">
             <a href="contactus.html" class="nav-btn">Contact Us</a>
             <a href="#" class="nav-btn login-btn" onclick="openLogin()">Log In</a>
-            <!-- User icon link: hidden when not logged in, shown when auth state exists -->
+            
             <a href="user.html" id="userLink" class="user-link" style="display: none;" title="Open profile">
                 <div id="userIcon" class="user-icon">U</div>
             </a>
@@ -28,7 +30,9 @@
         
         <div class="slide active">
             <img src="images/yakun1.png" alt="Ya Kun Kopi">
-        </div> <div class="slide">
+        </div> 
+        
+        <div class="slide">
             <img src="images/yakun2.png" alt="Ya Kun Toast">
         </div>
 
@@ -118,12 +122,13 @@
         </div>
     </div>
 
-    
     <script>
-        // CAROUSEL LOGIC
+        // --- CAROUSEL LOGIC ---
+        // Handles the automatic sliding of heritage images
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         
+        // Function to display a specific slide index
         function showSlide(index) {
             slides.forEach((slide, i) => {
                 slide.classList.remove('active');
@@ -133,36 +138,47 @@
             });
         }
 
+        // Function to move to the next slide (loops back to start)
         function nextSlide() {
             currentSlide = (currentSlide + 1) % slides.length;
             showSlide(currentSlide);
         }
 
+        // Auto-advance slides every 4 seconds
         setInterval(nextSlide, 4000);
 
-        // MODAL LOGIC - MAKE THESE GLOBAL
+
+        // --- MODAL LOGIC ---
+        // Handles opening/closing of Login and Signup popups
+        // Functions are attached to 'window' to be accessible globally
+        
         const loginModal = document.getElementById('loginModal');
         const signupModal = document.getElementById('signupModal');
         
+        // Opens Login, ensures Signup is closed
         window.openLogin = function() { 
             console.log("Opening login modal");
             signupModal.style.display = 'none';
             loginModal.style.display = 'flex'; 
         };
         
+        // Closes Login
         window.closeLogin = function() { 
             loginModal.style.display = 'none'; 
         };
         
+        // Opens Signup, ensures Login is closed
         window.openSignup = function() { 
             loginModal.style.display = 'none';
             signupModal.style.display = 'flex'; 
         };
         
+        // Closes Signup
         window.closeSignup = function() { 
             signupModal.style.display = 'none'; 
         };
         
+        // Switchers for the "Already have an account?" links
         window.switchToLogin = function() {
             signupModal.style.display = 'none';
             loginModal.style.display = 'flex';
@@ -173,19 +189,19 @@
             signupModal.style.display = 'flex';
         };
         
+        // Close modal if user clicks outside the box (on the overlay)
         window.onclick = function(event) { 
             if (event.target == loginModal) closeLogin();
             if (event.target == signupModal) closeSignup();
         }
     </script>
     
-    <!-- Import Firebase modules -->
     <script type="module" src="firebase-init.js"></script>
+    
     <script type="module">
-        // Import and initialize auth
         import { initAuth } from './auth.js';
         
-        // Wait for DOM to be fully loaded
+        // Ensure DOM is ready before attaching auth listeners
         document.addEventListener('DOMContentLoaded', function() {
             console.log("DOM loaded, initializing auth...");
             initAuth();

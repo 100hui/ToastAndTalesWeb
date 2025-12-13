@@ -8,9 +8,8 @@
     <link rel="stylesheet" href="homepage.css">
 
     <style>
-        /* --- PAGE SPECIFIC STYLES --- */
-
-        /* 1. HEADER BANNER */
+        /* --- 1. HEADER BANNER --- */
+        /* Styles for the "Get in Touch" top banner */
         .page-header {
             background-color: var(--yakun-brown);
             color: var(--gold-accent);
@@ -23,7 +22,8 @@
             margin-bottom: 10px;
         }
 
-        /* 2. TEAM SECTION */
+        /* --- 2. TEAM SECTION --- */
+        /* Layout for the "Meet the Creators" area */
         .team-section {
             padding: 60px 20px;
             max-width: 1000px;
@@ -31,6 +31,7 @@
             text-align: center;
         }
 
+        /* Flexbox grid to hold team member cards */
         .team-grid {
             display: flex;
             justify-content: center;
@@ -39,6 +40,7 @@
             margin-top: 40px;
         }
 
+        /* Individual profile card styling */
         .team-card {
             background-color: white;
             border-top: 5px solid var(--yakun-red);
@@ -53,6 +55,7 @@
             transform: translateY(-5px);
         }
 
+        /* Circular profile picture styling */
         .profile-pic {
             width: 150px;
             height: 150px;
@@ -81,21 +84,22 @@
             padding-top: 15px;
         }
 
-        /* 3. ADDRESS & IMAGE SECTION */
+        /* --- 3. ADDRESS & IMAGE SECTION --- */
+        /* Split container: Left side text, Right side image */
         .info-container {
             display: grid;
-            /* This splits the container into two equal columns */
             grid-template-columns: 1fr 1fr; 
             gap: 0;
             max-width: 1000px;
             margin: 40px auto 80px auto;
             background-color: white;
             border-radius: 8px;
-            overflow: hidden; /* Ensures the image corners get rounded too */
+            overflow: hidden; 
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            min-height: 350px; /* Ensures a nice height even on large screens */
+            min-height: 350px; 
         }
 
+        /* Left column: Address text */
         .address-box {
             background-color: var(--yakun-brown);
             color: white;
@@ -111,7 +115,7 @@
             margin-bottom: 20px;
         }
 
-        /* NEW STYLE FOR THE RIGHT SIDE IMAGE */
+        /* Right column: Campus Image */
         .image-box {
             position: relative;
             height: 100%;
@@ -120,18 +124,18 @@
         .image-box img {
             width: 100%;
             height: 100%;
-            /* 'cover' ensures the image fills the space without stretching */
             object-fit: cover; 
             display: block;
         }
 
-        /* Responsive design for smaller screens */
+        /* --- RESPONSIVE DESIGN --- */
+        /* Stack columns vertically on mobile screens (max-width: 768px) */
         @media (max-width: 768px) {
             .info-container {
-                grid-template-columns: 1fr; /* Stack them on mobile */
+                grid-template-columns: 1fr; 
             }
             .image-box {
-                height: 250px; /* Fixed height for image on mobile */
+                height: 250px; 
             }
         }
     </style>
@@ -247,34 +251,56 @@
         const loginModal = document.getElementById('loginModal');
         const signupModal = document.getElementById('signupModal');
         
+        /**
+         * Opens the Login modal and ensures Signup is closed.
+         */
         window.openLogin = function() { 
             signupModal.style.display = 'none';
             loginModal.style.display = 'flex'; 
         };
         
+        /**
+         * Closes the Login modal.
+         */
         window.closeLogin = function() { 
             loginModal.style.display = 'none'; 
         };
         
+        /**
+         * Opens the Signup modal and ensures Login is closed.
+         */
         window.openSignup = function() { 
             loginModal.style.display = 'none';
             signupModal.style.display = 'flex'; 
         };
         
+        /**
+         * Closes the Signup modal.
+         */
         window.closeSignup = function() { 
             signupModal.style.display = 'none'; 
         };
         
+        /**
+         * Switches view from Signup to Login.
+         */
         window.switchToLogin = function() {
             signupModal.style.display = 'none';
             loginModal.style.display = 'flex';
         };
         
+        /**
+         * Switches view from Login to Signup.
+         */
         window.switchToSignup = function() {
             loginModal.style.display = 'none';
             signupModal.style.display = 'flex';
         };
         
+        /**
+         * GLOBAL EVENT LISTENER
+         * Closes modals if the user clicks outside the modal box (on the overlay).
+         */
         window.onclick = function(event) { 
             if (event.target == loginModal) closeLogin();
             if (event.target == signupModal) closeSignup();
@@ -293,5 +319,4 @@
     <script type="module" src="firebase-init.js"></script>
 
 </body>
-
 </html>

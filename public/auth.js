@@ -1,4 +1,7 @@
-// auth.js - FIXED VERSION
+/**
+ * Handles Firebase Authentication logic including Signup, Login, 
+ * Logout, and UI state management.
+ */
 
 // Import Firebase modules directly
 import { 
@@ -10,7 +13,10 @@ import {
 // Import the initialized auth from firebase-init
 import { auth } from './firebase-init.js';
 
-// Form submission handlers
+/**
+ * Sets up DOM event listeners for authentication forms (Signup and Login).
+ * Checks for the existence of forms before attaching listeners to prevent errors.
+ */
 export function setupAuthListeners() {
     console.log("Setting up auth listeners...");
     
@@ -36,7 +42,12 @@ export function setupAuthListeners() {
     setupLogoutListener();
 }
 
-// Handle signup
+/**
+ * Handles the submission of the signup form.
+ * Validates password matching and length before creating a user in Firebase.
+ * * @async
+ * @param {Event} e - The form submission event.
+ */
 async function handleSignup(e) {
     e.preventDefault();
     console.log("Signup form submitted");
@@ -77,7 +88,12 @@ async function handleSignup(e) {
     }
 }
 
-// Handle login
+/**
+ * Handles the submission of the login form.
+ * Authenticates the user with Firebase using email and password.
+ * * @async
+ * @param {Event} e - The form submission event.
+ */
 async function handleLogin(e) {
     e.preventDefault();
     console.log("Login form submitted");
@@ -108,7 +124,11 @@ async function handleLogin(e) {
     }
 }
 
-// Update UI based on auth state
+/**
+ * Updates the UI elements based on the user's authentication state.
+ * Toggles between "Log In" and "Log Out" buttons and displays user avatar/initials.
+ * * @param {Object|null} user - The Firebase User object if logged in, or null if logged out.
+ */
 function updateLoginUI(user) {
     const loginBtn = document.querySelector('.login-btn');
     const userLink = document.getElementById('userLink');
@@ -134,7 +154,10 @@ function updateLoginUI(user) {
     }
 }
 
-// Setup logout listener
+/**
+ * Attaches a click listener to the login/logout button to handle logout actions.
+ * Ensures the event only triggers if a user is currently authenticated.
+ */
 function setupLogoutListener() {
     const loginBtn = document.querySelector('.login-btn');
     if (loginBtn) {
@@ -147,7 +170,10 @@ function setupLogoutListener() {
     }
 }
 
-// Handle logout
+/**
+ * Signs the user out of Firebase and resets the UI.
+ * * @async
+ */
 async function handleLogout() {
     try {
         await signOut(auth);
@@ -159,7 +185,12 @@ async function handleLogout() {
     }
 }
 
-// Check auth state on page load
+/**
+ * Initializes the authentication module.
+ * - Sets up the Firebase Auth state observer.
+ * - Calls the function to set up form listeners.
+ * * This is the main entry point for this module.
+ */
 export function initAuth() {
     console.log("Initializing auth...");
     
